@@ -1,0 +1,46 @@
+{
+    "Model": "Unit DBModel;\r\n\r\nInterface\r\n\r\nConst\r\n  cDB_MODEL = '%SQL%';\r\n  cDB_VERSION = %VERSION%;\r\n\r\nImplementation\r\n\r\nEnd.",
+    "ReplaceInFilename": true,
+    "PathHistoryMax": 15,
+    "PathHistory": [
+        "Y:\\mes_programmes\\Gestion_volet_somfy_io_garage_somfy_rts_portail_bft\\AV_Home_Domotic_App_Mobile\\DBModel.pas"
+    ],
+    "ColWidths": [
+        30,
+        218,
+        413,
+        65
+    ],
+    "ExchangeItemList": [
+        {
+            "RowHeight": 30,
+            "Replace": "%VERSION%",
+            "By": "20",
+            "InModel": true
+        },
+        {
+            "RowHeight": 30,
+            "Replace": "'",
+            "By": "''",
+            "InModel": false
+        },
+        {
+            "RowHeight": 30,
+            "Replace": "\r\n",
+            "By": "' + sLineBreak +\r\n  '",
+            "InModel": false
+        },
+        {
+            "RowHeight": 30,
+            "Replace": "+ sLineBreak +\r\n  '' + sLineBreak +",
+            "By": "+ sLineBreak + sLineBreak +",
+            "InModel": false
+        },
+        {
+            "RowHeight": 87,
+            "Replace": "%SQL%",
+            "By": "CREATE TABLE devices (\r\n  id INTEGER NOT NULL PRIMARY KEY,\r\n  name NVARCHAR DEFAULT \"\",\r\n  adress NVARCHAR NOT NULL,\r\n  port INTEGER NOT NULL DEFAULT 7007,\r\n  username NVARCHAR NOT NULL,\r\n  password NVARCHAR\r\n);\r\n\r\nCREATE TABLE scenes (\r\n  iddevice INTEGER NOT NULL,\r\n  id INTEGER NOT NULL,\r\n  name NVARCHAR DEFAULT \"\",\r\n  FOREIGN KEY (iddevice) REFERENCES devices(id) \r\n  ON DELETE CASCADE ON UPDATE CASCADE\r\n);\r\n\r\nCREATE TABLE ioremotes (\r\n  iddevice INTEGER NOT NULL,\r\n  id INTEGER NOT NULL UNIQUE,\r\n  name NVARCHAR DEFAULT \"\",\r\n  channelposition INTEGER NOT NULL,\r\n  FOREIGN KEY (iddevice) REFERENCES devices(id) \r\n  ON DELETE CASCADE ON UPDATE CASCADE\r\n);\r\n\r\nCREATE TABLE channelnames (\r\n  idremote INTEGER NOT NULL,\r\n  id INTEGER NOT NULL,\r\n  name NVARCHAR DEFAULT \"\",\r\n  FOREIGN KEY (idremote) REFERENCES ioremotes(id) \r\n  ON DELETE CASCADE ON UPDATE CASCADE\r\n);\r\n\r\nCREATE TABLE settings (\r\n  language NVARCHAR(20) DEFAULT \"auto\",\r\n  tabselected INTEGER DEFAULT 0,\r\n  deviceselected INTEGER DEFAULT 0\r\n);",
+            "InModel": true
+        }
+    ]
+}

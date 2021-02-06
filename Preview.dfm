@@ -1,0 +1,30 @@
+object fmPreview: TfmPreview
+  Left = 0
+  Top = 0
+  Caption = 'Preview'
+  ClientHeight = 411
+  ClientWidth = 384
+  Color = clBtnFace
+  Constraints.MinHeight = 100
+  Constraints.MinWidth = 100
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  OnClose = FormClose
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object mPreview: TMemo
+    Left = 0
+    Top = 0
+    Width = 384
+    Height = 411
+    Align = alClient
+    ScrollBars = ssBoth
+    TabOrder = 0
+  end
+end

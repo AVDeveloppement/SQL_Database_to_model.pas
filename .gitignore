@@ -1,0 +1,12 @@
+/__history
+/__recovery
+/output
+/pbe
+/release
+*.zip
+*.vlb
+*.~dsk
+*.local
+*.dsk
+*.identcache
+*.pbp
