@@ -222,7 +222,6 @@ object fmMain: TfmMain
         Gutter.Font.Name = 'Courier New'
         Gutter.Font.Style = []
         Gutter.RightOffset = 17
-        Highlighter = shPAS
         SearchEngine = sesSearch
         OnChange = smModelChange
         FontSmoothing = fsmNone
@@ -786,89 +785,5 @@ object fmMain: TfmMain
   object sesSearch: TSynEditSearch
     Left = 36
     Top = 31
-  end
-  object shCSS: TSynCSSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 24
-    Top = 343
-  end
-  object shCPP: TSynCppSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 64
-    Top = 342
-  end
-  object shHTML: TSynHTMLSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 104
-    Top = 344
-  end
-  object shINI: TSynIniSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 144
-    Top = 344
-  end
-  object shINNO: TSynInnoSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 184
-    Top = 344
-  end
-  object shJAVA: TSynJavaSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 224
-    Top = 344
-  end
-  object shJSCRIPT: TSynJScriptSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 272
-    Top = 344
-  end
-  object shPERL: TSynPerlSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 352
-    Top = 344
-  end
-  object shPHP: TSynPHPSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 384
-    Top = 344
-  end
-  object shSQL: TSynSQLSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 424
-    Top = 344
-  end
-  object shUNIX: TSynUNIXShellScriptSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 464
-    Top = 344
-  end
-  object shPAS: TSynPasSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
-    Left = 313
-    Top = 343
   end
 end

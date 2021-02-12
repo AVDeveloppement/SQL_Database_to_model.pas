@@ -156,10 +156,6 @@ object fmSettings: TfmSettings
     object tsSettingsProject: TTabSheet
       Caption = 'Project'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object LabelMaxPath: TLabel
         Left = 84
         Top = 57
@@ -170,9 +166,9 @@ object fmSettings: TfmSettings
       object LabelModelHighligth: TLabel
         Left = 172
         Top = 131
-        Width = 107
+        Width = 169
         Height = 13
-        Caption = 'Model highligth syntax'
+        Caption = 'Model and preview highligth syntax'
       end
       object LabelEchangeitemDescribeHighlight: TLabel
         Left = 172

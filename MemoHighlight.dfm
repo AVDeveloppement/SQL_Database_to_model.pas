@@ -125,7 +125,5 @@ object fmMemoHighlight: TfmMemoHighlight
     Gutter.Font.Name = 'Courier New'
     Gutter.Font.Style = []
     FontSmoothing = fsmNone
-    ExplicitWidth = 466
-    ExplicitHeight = 181
   end
 end

@@ -5,11 +5,11 @@ Interface
 Uses
   Winapi.Windows, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.IniFiles,
-  Projects;
+  Projects, SynEdit, SynMemo;
 
 Type
   TfmPreview = Class(TForm)
-    mPreview: TMemo;
+    smMemo: TSynMemo;
     Procedure FormClose(Sender: TObject; Var Action: TCloseAction);
     Procedure FormDestroy(Sender: TObject);
     Procedure FormShow(Sender: TObject);
@@ -23,6 +23,9 @@ Var
   fmPreview: TfmPreview = Nil;
 
 Implementation
+
+Uses
+  MemoHighlight;
 
 {$R *.dfm}
 
@@ -81,9 +84,11 @@ End;
 
 Procedure TfmPreview.Show;
 Begin
-  Caption       := Project.FileName;
+  SetSynMemoHighlighter(smMemo, Project.FModelHighlight);
 
-  mPreview.Text := Project.GenerateText;
+  Caption     := Project.FileName;
+
+  smMemo.Text := Project.GenerateText;
 
   Inherited Show;
 

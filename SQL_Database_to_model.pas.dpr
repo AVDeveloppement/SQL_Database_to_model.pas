@@ -9,7 +9,8 @@ Uses
   CommandLine In 'CommandLine.pas',
   Vcl.Themes,
   Vcl.Styles,
-  MemoHighlight In 'MemoHighlight.pas' {fmMemoHighlight};
+  MemoHighlight In 'MemoHighlight.pas' {fmMemoHighlight} ,
+  Highlighters In 'Highlighters.pas' {dmHighlighters: TDataModule};
 
 {$R *.res}
 
@@ -26,6 +27,7 @@ Begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TfmMain, fmMain);
   Application.CreateForm(TfmSettings, fmSettings);
+  Application.CreateForm(TdmHighlighters, dmHighlighters);
   Application.Run;
 
 End.

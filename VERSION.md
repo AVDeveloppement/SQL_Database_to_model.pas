@@ -1,4 +1,7 @@
-
+**V1.0.2**
+- Fix save as not change actual project opened
+- Fix preview memo not highlight
+------------
 **v1.0.1**
 - Fix incomplete clear path in project
 - Fix incorrect replace %magic% in filename

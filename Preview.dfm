@@ -18,13 +18,35 @@ object fmPreview: TfmPreview
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  object mPreview: TMemo
+  object smMemo: TSynMemo
     Left = 0
     Top = 0
     Width = 384
     Height = 411
     Align = alClient
-    ScrollBars = ssBoth
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Courier New'
+    Font.Style = []
     TabOrder = 0
+    CodeFolding.GutterShapeSize = 11
+    CodeFolding.CollapsedLineColor = clGrayText
+    CodeFolding.FolderBarLinesColor = clGrayText
+    CodeFolding.IndentGuidesColor = clGray
+    CodeFolding.IndentGuides = True
+    CodeFolding.ShowCollapsedLine = False
+    CodeFolding.ShowHintMark = True
+    UseCodeFolding = False
+    Gutter.Font.Charset = DEFAULT_CHARSET
+    Gutter.Font.Color = clWindowText
+    Gutter.Font.Height = -11
+    Gutter.Font.Name = 'Courier New'
+    Gutter.Font.Style = []
+    FontSmoothing = fsmNone
+    ExplicitLeft = 136
+    ExplicitTop = 112
+    ExplicitWidth = 200
+    ExplicitHeight = 150
   end
 end

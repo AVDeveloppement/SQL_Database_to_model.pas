@@ -4,7 +4,8 @@ Interface
 
 Uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, SynEdit, SynMemo, Vcl.Buttons, System.IniFiles;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, SynEdit, SynMemo, Vcl.Buttons, System.IniFiles,
+  Projects, Highlighters;
 
 Type
   TfmMemoHighlight = Class(TForm)
@@ -23,10 +24,51 @@ Type
 Var
   fmMemoHighlight: TfmMemoHighlight;
 
+Procedure SetSynMemoHighlighter(ASynMemo: TSynMemo;
+  AHighlighter: TProjectSynMemoHighlighter);
+
 Implementation
 
 {$R *.dfm}
 
+
+Procedure SetSynMemoHighlighter(ASynMemo: TSynMemo;
+  AHighlighter: TProjectSynMemoHighlighter);
+Begin
+  With dmHighlighters Do
+  Begin
+    Case AHighlighter Of
+      psmhCNET:
+        ASynMemo.Highlighter := shCSS;
+      psmhC:
+        ASynMemo.Highlighter := shCPP;
+      psmhHTML:
+        ASynMemo.Highlighter := shHTML;
+      psmhINI:
+        ASynMemo.Highlighter := shINI;
+      psmhInnoSetupScript:
+        ASynMemo.Highlighter := shINNO;
+      psmhJava:
+        ASynMemo.Highlighter := shJAVA;
+      psmhJavaScript:
+        ASynMemo.Highlighter := shJSCRIPT;
+      psmhObjectPascal:
+        ASynMemo.Highlighter := shPAS;
+      psmhPerl:
+        ASynMemo.Highlighter := shPERL;
+      psmhPHP:
+        ASynMemo.Highlighter := shPHP;
+      psmhSQL:
+        ASynMemo.Highlighter := shSQL;
+      psmhUNIXShellScript:
+        ASynMemo.Highlighter := shUNIX;
+      Else
+        ASynMemo.Highlighter := Nil;
+    End;
+  End;
+End;
+
+{ TfmMemoHighlight }
 
 Constructor TfmMemoHighlight.Create(AOwner: TComponent; AConfigPath: String);
 Begin

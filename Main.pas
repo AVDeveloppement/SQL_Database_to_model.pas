@@ -8,12 +8,8 @@ Uses
   Vcl.Dialogs, Vcl.StdCtrls, System.Types, System.UITypes, System.IniFiles,
   Vcl.ExtCtrls, System.ImageList, Vcl.ImgList, Vcl.Menus, Vcl.Buttons,
   Vcl.Grids, System.Actions, Vcl.ActnList, Vcl.ComCtrls,
-  Settings, Projects, Preview, CommandLine, SynEditMiscClasses, SynEditSearch,
-  SynEditHighlighter, SynEditCodeFolding, SynHighlighterPas, SynEdit, SynMemo,
-  SynHighlighterUNIXShellScript, SynHighlighterSQL, SynHighlighterPHP,
-  SynHighlighterPerl, SynHighlighterDWS, SynHighlighterJScript,
-  SynHighlighterJava, SynHighlighterInno, SynHighlighterIni, SynHighlighterHtml,
-  SynHighlighterCpp, SynHighlighterCS, System.IOUtils;
+  Settings, Projects, Preview, CommandLine, System.IOUtils, SynEditMiscClasses,
+  SynEditSearch, SynEdit, SynMemo;
 
 Type
 
@@ -52,18 +48,6 @@ Type
     miNewProject: TMenuItem;
     smModel: TSynMemo;
     sesSearch: TSynEditSearch;
-    shCSS: TSynCSSyn;
-    shCPP: TSynCppSyn;
-    shHTML: TSynHTMLSyn;
-    shINI: TSynIniSyn;
-    shINNO: TSynInnoSyn;
-    shJAVA: TSynJavaSyn;
-    shJSCRIPT: TSynJScriptSyn;
-    shPERL: TSynPerlSyn;
-    shPHP: TSynPHPSyn;
-    shSQL: TSynSQLSyn;
-    shUNIX: TSynUNIXShellScriptSyn;
-    shPAS: TSynPasSyn;
     Procedure sbCreateFileClick(Sender: TObject);
     Procedure FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
     Procedure FormShow(Sender: TObject);
@@ -106,7 +90,6 @@ Type
     Procedure LoadProject(AProjectFileName: String = '');
     Procedure SaveSettings;
     Procedure SetActualProjectPath(AProjectFileName: String = '');
-    Procedure SetSynMemoHighlighter(ASynMemo: TSynMemo; AHighlighter: TProjectSynMemoHighlighter);
     Procedure sgExchangeItemDefault;
     Procedure sgExchangeItemSetList;
     Procedure SetPathAndHistory(APathFileName: String = '');
@@ -674,7 +657,11 @@ Begin
   End;
 
   If Project.SaveToFile(FileSaveDialogProject.FileName) Then
+  Begin
     AddProjectInHistory(FileSaveDialogProject.FileName);
+
+    SetActualProjectPath(FileSaveDialogProject.FileName);
+  End;
 End;
 
 Procedure TfmMain.miSettingsGeneralClick(Sender: TObject);
@@ -908,39 +895,6 @@ Begin
       mi.OnClick := ProjectPathHistoryClick;
       miProjectHistory.Add(mi);
     End;
-  End;
-End;
-
-Procedure TfmMain.SetSynMemoHighlighter(ASynMemo: TSynMemo;
-  AHighlighter: TProjectSynMemoHighlighter);
-Begin
-  Case AHighlighter Of
-    psmhCNET:
-      ASynMemo.Highlighter := shCSS;
-    psmhC:
-      ASynMemo.Highlighter := shCPP;
-    psmhHTML:
-      ASynMemo.Highlighter := shHTML;
-    psmhINI:
-      ASynMemo.Highlighter := shINI;
-    psmhInnoSetupScript:
-      ASynMemo.Highlighter := shINNO;
-    psmhJava:
-      ASynMemo.Highlighter := shJAVA;
-    psmhJavaScript:
-      ASynMemo.Highlighter := shJSCRIPT;
-    psmhObjectPascal:
-      ASynMemo.Highlighter := shPAS;
-    psmhPerl:
-      ASynMemo.Highlighter := shPERL;
-    psmhPHP:
-      ASynMemo.Highlighter := shPHP;
-    psmhSQL:
-      ASynMemo.Highlighter := shSQL;
-    psmhUNIXShellScript:
-      ASynMemo.Highlighter := shUNIX;
-    Else
-      ASynMemo.Highlighter := Nil;
   End;
 End;
 
