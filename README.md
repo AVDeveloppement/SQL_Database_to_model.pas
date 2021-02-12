@@ -7,10 +7,12 @@ With this program you can create/update your model by paste your SQL template in
 Tired of CTRL + H ? Me yes so i write this program.
 
 ![Screenshot](https://github.com/AVDeveloppement/SQL_Database_to_model.pas/raw/main/images/screenshot_1.png "Screenshot")
+![Screenshot](https://github.com/AVDeveloppement/SQL_Database_to_model.pas/raw/main/images/screenshot_2.png "Screenshot")
+![Screenshot](https://github.com/AVDeveloppement/SQL_Database_to_model.pas/raw/main/images/screenshot_3.png "Screenshot")
 
 Any idea :point_up: Questions :question: Go to :point_right: [Discussions](https://github.com/AVDeveloppement/SQL_Database_to_model.pas/discussions "Discussions") :point_left:
 
-[Version: 1.0.1](/releases/tag/v1.0.1) ([Version history](VERSION.md))
+[Version: 1.0.1](https://github.com/AVDeveloppement/SQL_Database_to_model.pas/releases/tag/v1.0.1) ([Version history](https://github.com/AVDeveloppement/SQL_Database_to_model.pas/blob/main/VERSION.md))
 
 License: [Creative Commons Attribution-ShareAlike 4.0 International Public](https://github.com/AVDeveloppement/SQL_Database_to_model.pas/raw/main/LICENSE.txt "Creative Commons Attribution-ShareAlike 4.0 International Public License")
 
