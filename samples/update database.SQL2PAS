@@ -1,5 +1,5 @@
 {
-    "Model": "Unit %FILENAME%;\r\n\r\nInterface\r\n\r\nConst\r\n  cDB_VERSION = %VERSION%;\r\n  cDB_MODEL    = '%SQL%';\r\n\r\nImplementation\r\n\r\nEnd.",
+    "Model": "Unit %FILENAME%;\r\n\r\nInterface\r\n\r\nConst\r\n  cDB_UPDATE_V%VERSION% = '%SQL%';\r\n\r\nImplementation\r\n\r\nEnd.",
     "ReplaceInFilename": true,
     "ModelHighlight": 8,
     "ExchangeItemDescribeHighlight": 0,
@@ -7,14 +7,14 @@
     "ExchangeItemByHighlight": 11,
     "PathHistoryMax": 15,
     "PathHistory": [
-        "Y:\\mes_programmes\\SQL_Database_to_model.pas\\test_NewDB.pas",
+        "Y:\\mes_programmes\\SQL_Database_to_model.pas\\test_UpdateDBV%VERSION%.pas",
         "Y:\\mes_programmes\\SQL_Database_to_model.pas\\%FILENAME%.pas"
     ],
     "ColWidths": [
         30,
         218,
         181,
-        297,
+        282,
         51,
         91
     ],
@@ -23,15 +23,15 @@
             "Describe": "Version of database",
             "RowHeight": 20,
             "Replace": "%VERSION%",
-            "By": "1",
+            "By": "2",
             "InModel": true,
-            "InExchangeItem": false
+            "InExchangeItem": true
         },
         {
             "Describe": "",
             "RowHeight": 30,
             "Replace": "%FILENAME%",
-            "By": "Database.Model.New",
+            "By": "Database.Model.UpdateV%VERSION%",
             "InModel": true,
             "InExchangeItem": false
         },
@@ -53,7 +53,7 @@
         },
         {
             "Describe": "",
-            "RowHeight": 40,
+            "RowHeight": 30,
             "Replace": "\r\n",
             "By": "' + sLineBreak +\r\n  '",
             "InModel": false,

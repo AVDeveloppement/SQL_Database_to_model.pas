@@ -10,6 +10,8 @@ Tired of CTRL + H ? Me yes so i write this program.
 
 Any idea :point_up: Questions :question: Go to :point_right: [Discussions](https://github.com/AVDeveloppement/SQL_Database_to_model.pas/discussions "Discussions") :point_left:
 
+[Version: 1.0.1](/releases/tag/v1.0.1) ([Version history](VERSION.md))
+
 License: [Creative Commons Attribution-ShareAlike 4.0 International Public](https://github.com/AVDeveloppement/SQL_Database_to_model.pas/raw/main/LICENSE.txt "Creative Commons Attribution-ShareAlike 4.0 International Public License")
 
 Enjoy.

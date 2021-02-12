@@ -3,7 +3,7 @@ Unit Settings;
 Interface
 
 Uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Winapi.Windows, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.Buttons,
   Vcl.StdCtrls, Projects, Vcl.Samples.Spin, System.IniFiles, Vcl.Mask, Winapi.ShellApi,
   System.UITypes, CommandLine, System.ImageList, Vcl.ImgList;
@@ -19,14 +19,22 @@ Type
     seProjectPathHistoryMax: TSpinEdit;
     sePathHistoryMax: TSpinEdit;
     bClearPathHistory: TButton;
-    Label1: TLabel;
-    Label2: TLabel;
+    LabelMaxPath: TLabel;
+    LabelMaxProjectPath: TLabel;
     cbActualProjectAutoSave: TCheckBox;
     cbReplaceInFilename: TCheckBox;
     meProjectExt: TMaskEdit;
-    Label3: TLabel;
+    LabelProjectExt: TLabel;
     bRegisterProjectExt: TButton;
     ImageList: TImageList;
+    LabelModelHighligth: TLabel;
+    cbModelHighlight: TComboBox;
+    LabelEchangeitemDescribeHighlight: TLabel;
+    LabelEchangeitemReplaceHighlight: TLabel;
+    cbExchangeItemDescribeHighlight: TComboBox;
+    cbExchangeItemReplaceHighlight: TComboBox;
+    LabelEchangeitemByHighlight: TLabel;
+    cbExchangeItemByHighlight: TComboBox;
     Procedure sbCloseClick(Sender: TObject);
     Procedure sePathHistoryMaxChange(Sender: TObject);
     Procedure bProjectPathHistoryClearClick(Sender: TObject);
@@ -37,6 +45,10 @@ Type
     Procedure meProjectExtExit(Sender: TObject);
     Procedure FormCreate(Sender: TObject);
     Procedure FormCloseQuery(Sender: TObject; Var CanClose: Boolean);
+    Procedure cbModelHighlightChange(Sender: TObject);
+    Procedure cbExchangeItemDescribeHighlightChange(Sender: TObject);
+    Procedure cbExchangeItemReplaceHighlightChange(Sender: TObject);
+    Procedure cbExchangeItemByHighlightChange(Sender: TObject);
   Private
     FCanClose, FNeedRefresh: Boolean;
     Procedure RunAsAdminAndWaitFinnish(HWND: HWND; FileName, Parameters: String);
@@ -70,12 +82,14 @@ Implementation
 Procedure TfmSettings.bClearPathHistoryClick(Sender: TObject);
 Begin
   Project.FPathHistory.Clear;
+
   FNeedRefresh := True;
 End;
 
 Procedure TfmSettings.bProjectPathHistoryClearClick(Sender: TObject);
 Begin
   ProjectPathHistory.Clear;
+
   FNeedRefresh := True;
 End;
 
@@ -91,6 +105,30 @@ Begin
   RunAsAdminAndWaitFinnish(Handle, Application.ExeName, sState + ' ' + ProjectExt);
 
   SetStateProjectExtRegistered;
+End;
+
+Procedure TfmSettings.cbExchangeItemByHighlightChange(Sender: TObject);
+Begin
+  Project.FExchangeItemByHighlight := TProjectSynMemoHighlighter(cbExchangeItemByHighlight.ItemIndex);
+End;
+
+Procedure TfmSettings.cbExchangeItemDescribeHighlightChange(Sender: TObject);
+Begin
+  Project.FExchangeItemDescribeHighlight := TProjectSynMemoHighlighter
+    (cbExchangeItemDescribeHighlight.ItemIndex);
+End;
+
+Procedure TfmSettings.cbExchangeItemReplaceHighlightChange(Sender: TObject);
+Begin
+  Project.FExchangeItemReplaceHighlight := TProjectSynMemoHighlighter
+    (cbExchangeItemReplaceHighlight.ItemIndex);
+End;
+
+Procedure TfmSettings.cbModelHighlightChange(Sender: TObject);
+Begin
+  Project.FModelHighlight := TProjectSynMemoHighlighter(cbModelHighlight.ItemIndex);
+
+  FNeedRefresh            := True;
 End;
 
 Procedure TfmSettings.cbReplaceInFilenameClick(Sender: TObject);
@@ -110,9 +148,15 @@ End;
 
 Procedure TfmSettings.FormShow(Sender: TObject);
 Begin
-  FNeedRefresh                := False;
-  sePathHistoryMax.Value      := Project.FPathHistoryMax;
-  cbReplaceInFilename.Checked := Project.FReplaceInFilename;
+  FNeedRefresh                              := False;
+
+  sePathHistoryMax.Value                    := Project.FPathHistoryMax;
+  cbReplaceInFilename.Checked               := Project.FReplaceInFilename;
+  cbModelHighlight.ItemIndex                := Integer(Project.FModelHighlight);
+  cbExchangeItemDescribeHighlight.ItemIndex := Integer(Project.FExchangeItemDescribeHighlight);
+  cbExchangeItemReplaceHighlight.ItemIndex  := Integer(Project.FExchangeItemReplaceHighlight);
+  cbExchangeItemByHighlight.ItemIndex       := Integer(Project.FExchangeItemByHighlight);
+
   SetStateProjectExtRegistered;
 End;
 
@@ -128,7 +172,7 @@ End;
 
 Function TfmSettings.GetProjectPathHistoryMax: Integer;
 Begin
-  Result := sePathHistoryMax.Value;
+  Result := seProjectPathHistoryMax.Value;
 End;
 
 Function TfmSettings.GetProjectExt: String;
@@ -157,7 +201,8 @@ Begin
   Begin
     pcSettings.ActivePage := tsSettingsGeneral;
     meProjectExt.SetFocus;
-    MessageDlg('ERROR: Project extension are incorrect, use characters a-Z, 0-9 and size 3-7', mtError, [mbOK], 0);
+    MessageDlg('ERROR: Project extension are incorrect, use characters a-Z, 0-9 and size 3-7', mtError,
+      [mbOK], 0);
   End;
 End;
 

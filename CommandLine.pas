@@ -17,9 +17,9 @@ Type
   End;
 
 Const
-  cPRODUCT_NAME          = 'SQL Database Model to Program File';
+  cPRODUCT_NAME          = 'SQL Database Model to Model.pas';
   cFORM_TITLE            = cPRODUCT_NAME + ' - %s (%s)';
-  cREGISTRY_PRODUCT_NAME = 'AVDeveloppement.eu.SQL.Database.Model.to.Program.File';
+  cREGISTRY_PRODUCT_NAME = 'AVDeveloppement.eu.SQL.Database.Model.to.Model.pas';
 
 Var
   CmdLine: TCommandLine;
@@ -53,7 +53,8 @@ Begin
     GetTokenInformation(hAccessToken, TokenGroups, Nil, 0, dwInfoBufferSize);
     ptgGroups  := GetMemory(dwInfoBufferSize);
     Try
-      bSuccess := GetTokenInformation(hAccessToken, TokenGroups, ptgGroups, dwInfoBufferSize, dwInfoBufferSize);
+      bSuccess := GetTokenInformation(hAccessToken, TokenGroups, ptgGroups, dwInfoBufferSize,
+        dwInfoBufferSize);
       CloseHandle(hAccessToken);
       If bSuccess Then
       Begin
@@ -246,9 +247,9 @@ Begin
       End;
 
       If KeyExists('SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.' +
-        AProjectExt + '\UserChoice') then
+        AProjectExt + '\UserChoice') Then
         DeleteKey('SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.' +
-        AProjectExt + '\UserChoice');
+          AProjectExt + '\UserChoice');
     Finally
       Free;
     End;

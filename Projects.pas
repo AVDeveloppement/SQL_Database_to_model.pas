@@ -9,8 +9,8 @@ Uses System.Classes, System.Generics.Collections, System.JSON, System.SysUtils,
 Type
   TExchangeItem = Class
     FRowHeight: Integer;
-    FReplace, FBy: String;
-    FInModel: Boolean;
+    FDescribe, FReplace, FBy: String;
+    FInModel, FInExchangeItem: Boolean;
     Procedure Assign(AExchangeItem: TExchangeItem);
     Constructor Create;
   End;
@@ -19,6 +19,9 @@ Type
     Procedure Assign(AExchangeItemList: TExchangeItemList);
   End;
 
+  TProjectSynMemoHighlighter = (psmhNone, psmhCNET, psmhC, psmhHTML, psmhINI, psmhInnoSetupScript,
+    psmhJava, psmhJavaScript, psmhObjectPascal, psmhPerl, psmhPHP, psmhSQL, psmhUNIXShellScript);
+
   TProject = Class
     FModel: String;
     FColWidths: TList<Integer>;
@@ -26,19 +29,23 @@ Type
     FPathHistory: TList<String>;
     FPathHistoryMax: Integer;
     FReplaceInFilename: Boolean;
+    FModelHighlight, FExchangeItemDescribeHighlight,
+      FExchangeItemReplaceHighlight, FExchangeItemByHighlight: TProjectSynMemoHighlighter;
   Private
+    Procedure CheckColsWidths;
     Function GenerateFileName: String;
     Function GetFileName: String;
+    Function GetParsedExchangeItemList: TExchangeItemList;
     Procedure SetFileName(Const Value: String);
   Public
     Constructor Create;
     Procedure Default;
     Destructor Destroy; Override;
     Function GenerateText: String;
-    Procedure LoadFromFile(AFileName: String);
+    Function LoadFromFile(AFileName: String): Boolean;
     Procedure LoadFromJson(AJson: String);
     Function SaveAsJson: String;
-    Procedure SaveToFile(AFileName: String);
+    Function SaveToFile(AFileName: String): Boolean;
     Property FileName: String Read GetFileName Write SetFileName;
   End;
 
@@ -53,10 +60,15 @@ Var
   ProjectPathHistory: TProjectPathHistory;
 
 Const
-  cIDX_COLUMN_ID       = 0;
-  cIDX_COLUMN_REPLACE  = 1;
-  cIDX_COLUMN_BY       = 2;
-  cIDX_COLUMN_IN_MODEL = 3;
+  cIDX_COLUMN_ID               = 0;
+  cIDX_COLUMN_DESCRIBE         = 1;
+  cIDX_COLUMN_REPLACE          = 2;
+  cIDX_COLUMN_BY               = 3;
+  cIDX_COLUMN_IN_MODEL         = 4;
+  cIDX_COLUMN_IN_EXCHANGE_ITEM = 5;
+  cNB_COL_WIDTHS               = 6;
+  cCOL_WIDTHS_DEFAULT          = 100;
+  cROW_HEIGHT_DEFAULT          = 30;
 
 Implementation
 
@@ -64,22 +76,26 @@ Implementation
 
 Procedure TExchangeItem.Assign(AExchangeItem: TExchangeItem);
 Begin
-  FReplace   := AExchangeItem.FReplace;
-  FBy        := AExchangeItem.FBy;
+  FDescribe       := AExchangeItem.FDescribe;
+  FReplace        := AExchangeItem.FReplace;
+  FBy             := AExchangeItem.FBy;
 
-  FRowHeight := AExchangeItem.FRowHeight;
+  FRowHeight      := AExchangeItem.FRowHeight;
 
-  FInModel   := AExchangeItem.FInModel;
+  FInModel        := AExchangeItem.FInModel;
+  FInExchangeItem := AExchangeItem.FInExchangeItem;
 End;
 
 Constructor TExchangeItem.Create;
 Begin
-  FReplace   := '';
-  FBy        := '';
+  FDescribe       := '';
+  FReplace        := '';
+  FBy             := '';
 
-  FRowHeight := 30;
+  FRowHeight      := cROW_HEIGHT_DEFAULT;
 
-  FInModel   := True;
+  FInModel        := True;
+  FInExchangeItem := False;
 End;
 
 { TExchangeItemList }
@@ -99,6 +115,12 @@ End;
 
 { TProject }
 
+Procedure TProject.CheckColsWidths;
+Begin
+  While FColWidths.Count < cNB_COL_WIDTHS Do
+    FColWidths.Add(cCOL_WIDTHS_DEFAULT);
+End;
+
 Constructor TProject.Create;
 Begin
   FColWidths        := TList<Integer>.Create;
@@ -112,24 +134,26 @@ Procedure TProject.Default;
 Begin
   FColWidths.Clear;
   FColWidths.Add(30);  // id
+  FColWidths.Add(250); // describe
   FColWidths.Add(150); // replace
   FColWidths.Add(300); // by
   FColWidths.Add(100); // in model
+  FColWidths.Add(100); // in exchange item
 
   FExchangeItemList.Clear;
   FExchangeItemList.Add(TExchangeItem.Create);
   With FExchangeItemList.Last Do
   Begin
-    FReplace   := '%SQL%';
-    FRowHeight := 100;
+    FReplace        := '''';
+    FBy             := '''''';
+    FInModel        := False;
+    FInExchangeItem := True;
   End;
   FExchangeItemList.Add(TExchangeItem.Create);
   With FExchangeItemList.Last Do
   Begin
-    FReplace   := '''';
-    FBy        := '''''';
-    FRowHeight := 30;
-    FInModel   := false;
+    FReplace   := '%SQL%';
+    FRowHeight := 100;
   End;
 
   FPathHistory.Clear;
@@ -142,7 +166,12 @@ Begin
     'Implementation' + sLineBreak + sLineBreak +
     'End.';
 
-  FReplaceInFilename := True;
+  FReplaceInFilename             := True;
+
+  FModelHighlight                := psmhObjectPascal;
+  FExchangeItemDescribeHighlight := psmhNone;
+  FExchangeItemReplaceHighlight  := psmhNone;
+  FExchangeItemByHighlight       := psmhSQL;
 End;
 
 Destructor TProject.Destroy;
@@ -156,8 +185,7 @@ End;
 
 Function TProject.GenerateFileName: String;
 Var
-  sExchangeItemReplace, t: String;
-  isExchangeItemReplaceLength: Integer;
+  TMPExchangeItemList: TExchangeItemList;
 Begin
   If FPathHistory.Count = 0 Then
   Begin
@@ -165,18 +193,20 @@ Begin
     Exit;
   End;
 
-  Result                        := FPathHistory.Last;
+  Result              := FPathHistory.Last;
 
-  For Var I                     := 0 To FExchangeItemList.Count - 1 Do
-  Begin
-    sExchangeItemReplace        := FExchangeItemList.Items[I].FReplace;
-    isExchangeItemReplaceLength := Length(sExchangeItemReplace);
-    t                           := Copy(sExchangeItemReplace, 1, 1);
-    t                           := Copy(sExchangeItemReplace, isExchangeItemReplaceLength, 1);
-    If (isExchangeItemReplaceLength > 2) And (Copy(sExchangeItemReplace, 1, 1) = '%')
-      And (Copy(sExchangeItemReplace, isExchangeItemReplaceLength, 1) = '%') Then
-      Result := StringReplace(Result, FExchangeItemList.Items[I].FReplace, FExchangeItemList.Items[I].FBy,
-        [rfReplaceAll, rfIgnoreCase]);
+  TMPExchangeItemList := GetParsedExchangeItemList;
+  Try
+    For Var I         := 0 To TMPExchangeItemList.Count - 1 Do
+    Begin
+      If TMPExchangeItemList.Items[I].FReplace.StartsWith('%') And
+        TMPExchangeItemList.Items[I].FReplace.EndsWith('%') Then
+        Result := StringReplace(Result, TMPExchangeItemList.Items[I].FReplace,
+          TMPExchangeItemList.Items[I].FBy,
+          [rfReplaceAll, rfIgnoreCase]);
+    End;
+  Finally
+    TMPExchangeItemList.Free;
   End;
 End;
 
@@ -184,35 +214,15 @@ Function TProject.GenerateText: String;
 Var
   TMPExchangeItemList: TExchangeItemList;
 Begin
-  // work on a tmp list so we can modify item
-  TMPExchangeItemList := TExchangeItemList.Create;
+  TMPExchangeItemList := GetParsedExchangeItemList; // get list with replacement done in exchange item
   Try
-    TMPExchangeItemList.Assign(FExchangeItemList);
-
-    // parse list
-    For Var I := 0 To TMPExchangeItemList.Count - 1 Do
-    Begin
-      // apply exchange item with inmodel false
-      If Not TMPExchangeItemList[I].FInModel Then
-      Begin
-        // order is important, apply only on item below
-        For Var N := I To TMPExchangeItemList.Count - 1 Do
-        Begin
-          // on item of list with inmodel true
-          If TMPExchangeItemList[N].FInModel Then
-            TMPExchangeItemList[N].FBy := StringReplace(TMPExchangeItemList[N].FBy,
-              TMPExchangeItemList[I].FReplace, TMPExchangeItemList[I].FBy, [rfReplaceAll, rfIgnoreCase]);
-        End;
-      End;
-    End;
-
-    Result    := FModel;
-    // finally replace in model
-    For Var I := 0 To TMPExchangeItemList.Count - 1 Do
+    Result            := FModel;
+    // replace in model
+    For Var I         := 0 To TMPExchangeItemList.Count - 1 Do
     Begin
       If TMPExchangeItemList[I].FInModel Then
-        Result := StringReplace(Result, TMPExchangeItemList[I].FReplace, TMPExchangeItemList[I].FBy,
-          [rfReplaceAll, rfIgnoreCase]);
+        Result := StringReplace(Result, TMPExchangeItemList[I].FReplace,
+          TMPExchangeItemList[I].FBy, [rfReplaceAll, rfIgnoreCase]);
     End;
   Finally
     TMPExchangeItemList.Free;
@@ -232,15 +242,46 @@ Begin
     Result := '';
 End;
 
-Procedure TProject.LoadFromFile(AFileName: String);
+Function TProject.GetParsedExchangeItemList: TExchangeItemList;
+Begin
+  Result := TExchangeItemList.Create;
+  Try
+    Result.Assign(FExchangeItemList);
+
+    // parse list
+    For Var I := 0 To Result.Count - 1 Do
+    Begin
+      // apply replace exchange item
+      If Result[I].FInExchangeItem Then
+      Begin
+        // order is important, apply only on item below
+        For Var N := I To Result.Count - 1 Do
+        Begin
+          // on item of list with inmodel true
+          If Result[N].FInModel Then
+            Result[N].FBy := StringReplace(Result[N].FBy,
+              Result[I].FReplace, Result[I].FBy, [rfReplaceAll, rfIgnoreCase]);
+        End;
+      End;
+    End;
+  Except
+    FreeAndNil(Result);
+    Raise;
+  End;
+End;
+
+Function TProject.LoadFromFile(AFileName: String): Boolean;
 Begin
   If Not FileExists(AFileName) Then
-    Exit;
+    Exit(False);
 
   With TStringList.Create Do
     Try
       LoadFromFile(AFileName);
+
       LoadFromJson(Text);
+
+      Exit(True);
     Finally
       Free;
     End;
@@ -282,6 +323,30 @@ Begin
         If JsonReader.read And (JsonReader.TokenType = TJsonToken.Integer) Then
           FPathHistoryMax := JsonReader.Value.AsInteger;
       End
+      Else If PropertyName = 'ModelHighlight' Then
+      Begin
+        // get value
+        If JsonReader.read And (JsonReader.TokenType = TJsonToken.Integer) Then
+          FModelHighlight := TProjectSynMemoHighlighter(JsonReader.Value.AsInteger);
+      End
+      Else If PropertyName = 'ExchangeItemDescribeHighlight' Then
+      Begin
+        // get value
+        If JsonReader.read And (JsonReader.TokenType = TJsonToken.Integer) Then
+          FExchangeItemDescribeHighlight := TProjectSynMemoHighlighter(JsonReader.Value.AsInteger);
+      End
+      Else If PropertyName = 'ExchangeItemReplaceHighlight' Then
+      Begin
+        // get value
+        If JsonReader.read And (JsonReader.TokenType = TJsonToken.Integer) Then
+          FExchangeItemReplaceHighlight := TProjectSynMemoHighlighter(JsonReader.Value.AsInteger);
+      End
+      Else If PropertyName = 'ExchangeItemByHighlight' Then
+      Begin
+        // get value
+        If JsonReader.read And (JsonReader.TokenType = TJsonToken.Integer) Then
+          FExchangeItemByHighlight := TProjectSynMemoHighlighter(JsonReader.Value.AsInteger);
+      End
       Else If PropertyName = 'PathHistory' Then
       Begin
         // get array
@@ -302,6 +367,8 @@ Begin
           // parse array
           While JsonReader.read And (JsonReader.TokenType = TJsonToken.Integer) Do
             FColWidths.Add(JsonReader.Value.AsInteger);
+
+          CheckColsWidths;
         End;
       End
       Else If PropertyName = 'ExchangeItemList' Then
@@ -324,6 +391,12 @@ Begin
                   If JsonReader.read And (JsonReader.TokenType = TJsonToken.Integer) Then
                     ExchangeItem.FRowHeight := JsonReader.Value.AsInteger;
                 End
+                Else If JsonReader.Value.AsString = 'Describe' Then
+                Begin
+                  // get value
+                  If JsonReader.read And (JsonReader.TokenType = TJsonToken.String) Then
+                    ExchangeItem.FDescribe := JsonReader.Value.AsString;
+                End
                 Else If JsonReader.Value.AsString = 'Replace' Then
                 Begin
                   // get value
@@ -341,6 +414,12 @@ Begin
                   // get value
                   If JsonReader.read And (JsonReader.TokenType = TJsonToken.Boolean) Then
                     ExchangeItem.FInModel := JsonReader.Value.AsBoolean;
+                End
+                Else If JsonReader.Value.AsString = 'InExchangeItem' Then
+                Begin
+                  // get value
+                  If JsonReader.read And (JsonReader.TokenType = TJsonToken.Boolean) Then
+                    ExchangeItem.FInExchangeItem := JsonReader.Value.AsBoolean;
                 End;
               End;
             Except
@@ -378,6 +457,14 @@ Begin
 
       Add('ReplaceInFilename', FReplaceInFilename);
 
+      Add('ModelHighlight', FModelHighlight);
+
+      Add('ExchangeItemDescribeHighlight', FExchangeItemDescribeHighlight);
+
+      Add('ExchangeItemReplaceHighlight', FExchangeItemReplaceHighlight);
+
+      Add('ExchangeItemByHighlight', FExchangeItemByHighlight);
+
       Add('PathHistoryMax', FPathHistoryMax);
       If FPathHistory.Count > 0 Then
       Begin
@@ -406,10 +493,12 @@ Begin
           For Var I := 0 To FExchangeItemList.Count - 1 Do
           Begin
             BeginObject
+              .Add('Describe', FExchangeItemList[I].FDescribe)
               .Add('RowHeight', FExchangeItemList[I].FRowHeight)
               .Add('Replace', FExchangeItemList[I].FReplace)
               .Add('By', FExchangeItemList[I].FBy)
               .Add('InModel', FExchangeItemList[I].FInModel)
+              .Add('InExchangeItem', FExchangeItemList[I].FInExchangeItem)
               .EndObject;
           End;
           EndArray;
@@ -427,15 +516,18 @@ Begin
   End;
 End;
 
-Procedure TProject.SaveToFile(AFileName: String);
+Function TProject.SaveToFile(AFileName: String): Boolean;
 Begin
   With TStringList.Create Do
     Try
       Text := SaveAsJson;
+
       SaveToFile(AFileName);
     Finally
       Free;
     End;
+
+  Exit(True);
 End;
 
 Procedure TProject.SetFileName(Const Value: String);
@@ -453,6 +545,9 @@ Begin
   End;
 
   FPathHistory.Add(Value);
+
+  While FPathHistory.Count > FPathHistoryMax Do
+    FPathHistory.Delete(0);
 End;
 
 { TProjectPathHistory }

@@ -3,9 +3,9 @@ Unit Preview;
 Interface
 
 Uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Winapi.Windows, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.IniFiles,
-  Settings, Projects;
+  Projects;
 
 Type
   TfmPreview = Class(TForm)
@@ -42,50 +42,47 @@ Procedure TfmPreview.FormDestroy(Sender: TObject);
 Begin
   With TMemIniFile.Create(ConfigPath) Do
     Try
-      EraseSection('fmPreview');
+      EraseSection(Name);
 
       If WindowState = TWindowState.WsNormal Then
       Begin
-        WriteInteger('fmPreview', 'Width', Width);
-        WriteInteger('fmPreview', 'Height', Height);
+        WriteInteger(Name, 'Width', Width);
+        WriteInteger(Name, 'Height', Height);
 
-        WriteInteger('fmPreview', 'Left', Left);
-        WriteInteger('fmPreview', 'Top', Top);
+        WriteInteger(Name, 'Left', Left);
+        WriteInteger(Name, 'Top', Top);
       End;
 
-      WriteInteger('fmPreview', 'WindowState', Integer(WindowState));
+      WriteInteger(Name, 'WindowState', Integer(WindowState));
 
       UpdateFile;
     Finally
       Free;
     End;
+
   fmPreview := Nil;
 End;
 
 Procedure TfmPreview.FormShow(Sender: TObject);
-Var
-  MemIniFile: TMemIniFile;
 Begin
-  MemIniFile := TMemIniFile.Create(ConfigPath);
-  Try
-    With MemIniFile Do
-    Begin
-      Width       := ReadInteger('fmPreview', 'Width', Width);
-      Height      := ReadInteger('fmPreview', 'Height', Height);
+  With TMemIniFile.Create(ConfigPath) Do
+    Try
+      Width       := ReadInteger(Name, 'Width', Width);
+      Height      := ReadInteger(Name, 'Height', Height);
 
-      Left        := ReadInteger('fmPreview', 'Left', Left);
-      Top         := ReadInteger('fmPreview', 'Top', Top);
+      Left        := ReadInteger(Name, 'Left', Left);
+      Top         := ReadInteger(Name, 'Top', Top);
 
-      WindowState := TWindowState(ReadInteger('fmPreview', 'WindowState', Integer(WindowState)));
+      WindowState := TWindowState(ReadInteger(Name, 'WindowState', Integer(WindowState)));
+    Finally
+      Free;
     End;
-  Finally
-    MemIniFile.Free;
-  End;
 End;
 
 Procedure TfmPreview.Show;
 Begin
   Caption       := Project.FileName;
+
   mPreview.Text := Project.GenerateText;
 
   Inherited Show;

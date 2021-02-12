@@ -6,7 +6,10 @@ Uses
   Settings In 'Settings.pas' {fmSettings} ,
   Preview In 'Preview.pas' {fmPreview} ,
   Projects In 'Projects.pas',
-  CommandLine In 'CommandLine.pas';
+  CommandLine In 'CommandLine.pas',
+  Vcl.Themes,
+  Vcl.Styles,
+  MemoHighlight In 'MemoHighlight.pas' {fmMemoHighlight};
 
 {$R *.res}
 
