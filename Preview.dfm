@@ -13,6 +13,7 @@ object fmPreview: TfmPreview
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCanResize = FormCanResize
   OnClose = FormClose
   OnDestroy = FormDestroy
   OnShow = FormShow
@@ -44,9 +45,5 @@ object fmPreview: TfmPreview
     Gutter.Font.Name = 'Courier New'
     Gutter.Font.Style = []
     FontSmoothing = fsmNone
-    ExplicitLeft = 136
-    ExplicitTop = 112
-    ExplicitWidth = 200
-    ExplicitHeight = 150
   end
 end

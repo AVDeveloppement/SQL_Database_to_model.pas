@@ -15,8 +15,11 @@ Type
     Procedure FormShow(Sender: TObject);
     Procedure Show; Reintroduce;
     Constructor Create(AOwner: TComponent; AConfigPath: String); Reintroduce; Overload;
+    Procedure FormCanResize(Sender: TObject; Var NewWidth, NewHeight: Integer;
+      Var Resize: Boolean);
   Private
     ConfigPath: String;
+    LastWindowState: TWindowState;
   End;
 
 Var
@@ -33,7 +36,15 @@ Uses
 Constructor TfmPreview.Create(AOwner: TComponent; AConfigPath: String);
 Begin
   Inherited Create(AOwner);
-  ConfigPath := AConfigPath;
+  ConfigPath      := AConfigPath;
+  LastWindowState := TWindowState.wsNormal;
+End;
+
+Procedure TfmPreview.FormCanResize(Sender: TObject; Var NewWidth,
+  NewHeight: Integer; Var Resize: Boolean);
+Begin
+  If WindowState <> TWindowState.wsMinimized Then
+    LastWindowState := WindowState;
 End;
 
 Procedure TfmPreview.FormClose(Sender: TObject; Var Action: TCloseAction);
@@ -47,7 +58,7 @@ Begin
     Try
       EraseSection(Name);
 
-      If WindowState = TWindowState.WsNormal Then
+      If WindowState = TWindowState.wsNormal Then
       Begin
         WriteInteger(Name, 'Width', Width);
         WriteInteger(Name, 'Height', Height);
@@ -80,20 +91,20 @@ Begin
     Finally
       Free;
     End;
-End;
 
-Procedure TfmPreview.Show;
-Begin
   SetSynMemoHighlighter(smMemo, Project.FModelHighlight);
 
   Caption     := Project.FileName;
 
   smMemo.Text := Project.GenerateText;
+End;
 
+Procedure TfmPreview.Show;
+Begin
   Inherited Show;
 
   If WindowState = TWindowState.wsMinimized Then
-    WindowState := TWindowState.WsNormal;
+    WindowState := LastWindowState;
 End;
 
 End.
