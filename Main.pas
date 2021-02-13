@@ -760,24 +760,28 @@ Begin
 End;
 
 Procedure TfmMain.sbCreateFileClick(Sender: TObject);
+Var
+  sFileName: String;
 Begin
   // need check if focused need call event onexit by set focus on others component
   If bePath.Focused Then
     pcProject.SetFocus;
 
-  If bePath.Text = '' Then
+  sFileName := Project.FileName;
+
+  If sFileName = '' Then
   Begin
     MessageDlg('ERROR: You must specify a filename', mtError, [mbOK], 0);
     bePath.SetFocus;
     Exit;
   End;
 
-  If FileExists(bePath.Text) Then
+  If FileExists(sFileName) Then
   Begin
-    If MessageDlg(Format('The file %s already exist, overwrite?', [ExtractFileName(bePath.Text)]),
+    If MessageDlg(Format('The file %s already exist, overwrite?', [ExtractFileName(sFileName)]),
       mtConfirmation, [mbYes, mbNo], 0) = mrYes Then
     Begin
-      If Not DeleteFile(bePath.Text) Then
+      If Not DeleteFile(sFileName) Then
       Begin
         MessageDlg('ERROR: Cannot delete file', mtError, [mbOK], 0);
         bePath.SetFocus;
@@ -791,7 +795,7 @@ Begin
   With TStringList.Create Do
     Try
       Text := Project.GenerateText;
-      SaveToFile(Project.FileName);
+      SaveToFile(sFileName);
     Finally
       Free;
     End;

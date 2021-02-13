@@ -1,6 +1,7 @@
 **V1.0.2**
 - Fix save as not change actual project opened
 - Fix preview memo not highlight
+- Fix ask overwrite file generated
 ------------
 **v1.0.1**
 - Fix incomplete clear path in project

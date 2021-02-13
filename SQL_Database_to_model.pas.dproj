@@ -87,9 +87,9 @@
     <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
     <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     <VerInfo_Locale>1033</VerInfo_Locale>
-    <VerInfo_Keys>CompanyName=AVDeveloppement.eu;FileDescription=For create file with model and auto replacement;FileVersion=1.0.2.9;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=SQL_Database_to_model.pas;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.SQL_Database_to_model.pas</VerInfo_Keys>
+    <VerInfo_Keys>CompanyName=AVDeveloppement.eu;FileDescription=For create file with model and auto replacement;FileVersion=1.0.2.10;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=SQL_Database_to_model.pas;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.SQL_Database_to_model.pas</VerInfo_Keys>
     <VerInfo_Release>2</VerInfo_Release>
-    <VerInfo_Build>9</VerInfo_Build>
+    <VerInfo_Build>10</VerInfo_Build>
     <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
   </PropertyGroup>
   <ItemGroup>
